@@ -37,6 +37,7 @@ import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
 import net.momirealms.customcrops.api.event.SprinklerFillEvent;
 import net.momirealms.customcrops.api.event.SprinklerInteractEvent;
 import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
+import net.momirealms.customcrops.api.event.SprinklerWaterPotEvent;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
@@ -330,6 +331,14 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                             PotConfig potConfig = potBlock.config(anotherState);
                             if (!potConfig.disablePluginMechanism()) {
                                 if (config.potWhitelist().contains(potConfig.id())) {
+                                    // Giraffe fork (2026-09-15): let other plugins act on every pot a sprinkler waters
+                                    SprinklerWaterPotEvent waterPotEvent = new SprinklerWaterPotEvent(
+                                            bukkitLocation, state, config,
+                                            pos3.toLocation(bukkitWorld), potBlock, anotherState, potConfig
+                                    );
+                                    if (EventUtils.fireAndCheckCancel(waterPotEvent)) {
+                                        continue;
+                                    }
                                     if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
                                         BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
                                                 () -> potBlock.updateBlockAppearance(

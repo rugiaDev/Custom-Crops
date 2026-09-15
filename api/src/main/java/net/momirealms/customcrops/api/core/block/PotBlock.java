@@ -564,6 +564,28 @@ public class PotBlock extends AbstractCustomCropsBlock {
         return true;
     }
 
+    /**
+     * Giraffe fork (2026-09-15): removes a fertilizer from the pot by id.
+     * Lets other plugins decide how a full pot is handled (e.g. overwrite the oldest one).
+     *
+     * @param state the block state
+     * @param fertilizerID the fertilizer id to remove
+     * @return whether a fertilizer was removed (pot appearance may need an update)
+     */
+    @SuppressWarnings("unchecked")
+    public boolean removeFertilizer(CustomCropsBlockState state, String fertilizerID) {
+        Tag<?> fertilizerTag = state.get("fertilizers");
+        if (fertilizerTag == null || fertilizerID == null) return false;
+        List<CompoundTag> tags = ((List<CompoundTag>) fertilizerTag.getValue());
+        for (int i = 0; i < tags.size(); i++) {
+            if (fertilizerID.equals(tagToFertilizer(tags.get(i).getValue()).id())) {
+                tags.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     private boolean tickFertilizer(CustomCropsBlockState state) {
         // no fertilizers applied

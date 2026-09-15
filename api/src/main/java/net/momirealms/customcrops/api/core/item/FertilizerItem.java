@@ -118,14 +118,15 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                     .id(fertilizerConfig.id())
                     .build();
             CustomCropsBlockState potState = potBlock.fixOrGetState(world, Pos3.from(targetLocation), potConfig, event.relatedID());
+            // trigger event
+            // Giraffe fork (2026-09-15): fired before the capacity check, so listeners can make room in a full pot
+            FertilizerUseEvent useEvent = new FertilizerUseEvent(player, itemInHand, fertilizer, targetLocation, potState, event.hand(), potConfig);
+            if (EventUtils.fireAndCheckCancel(useEvent))
+                return InteractionResult.COMPLETE;
             if (!potBlock.canApplyFertilizer(potState, fertilizer)) {
                 ActionManager.trigger(context, potConfig.maxFertilizerActions());
                 return InteractionResult.COMPLETE;
             }
-            // trigger event
-            FertilizerUseEvent useEvent = new FertilizerUseEvent(player, itemInHand, fertilizer, targetLocation, potState, event.hand(), potConfig);
-            if (EventUtils.fireAndCheckCancel(useEvent))
-                return InteractionResult.COMPLETE;
             // add the fertilizer
             if (potBlock.addFertilizer(potState, fertilizer)) {
                 potBlock.updateBlockAppearance(targetLocation, potState, potBlock.fertilizers(potState));
