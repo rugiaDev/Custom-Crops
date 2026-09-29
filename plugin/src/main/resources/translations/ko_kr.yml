@@ -21,7 +21,7 @@ argument.parse.failure.offlineplayer: "<red>'<arg:0>' 이름의 플레이어를 
 argument.parse.failure.player: "<red>'<arg:0>' 이름의 플레이어를 찾을 수 없습니다</red>"
 argument.parse.failure.world: "<red>'<arg:0>'(은)는 유효한 마인크래프트 월드가 아닙니다</red>"
 argument.parse.failure.location.invalid_format: "<red>'<arg:0>'(은)는 유효한 좌표가 아닙니다. 필요한 형식: '<arg:1> <arg:2> <arg:3></red>"
-argument.parse.failure.location.mixed_local_absolute: "<red>로컬 좌표와 절대 좌표를 섞어 쓸 수 없습니다. ('^'를 모두 사용하거나 모두 사용하지 마세요)</red>"
+argument.parse.failure.location.mixed_local_absolute: "<red>로컬 좌표와 절대 좌표를 섞어 사용할 수 없습니다. ('^'를 모두 사용하거나 모두 사용하지 마세요)</red>"
 argument.parse.failure.namespacedkey.namespace: "<red>잘못된 네임스페이스 '<arg:0>'. [a-z0-9._-]만 사용 가능합니다</red>"
 argument.parse.failure.namespacedkey.key: "<red>잘못된 키 '<arg:0>'. [a-z0-9/._-]만 사용 가능합니다</red>"
 argument.parse.failure.namespacedkey.need_namespace: "<red>잘못된 입력 '<arg:0>', 명확한 네임스페이스가 필요합니다</red>"
