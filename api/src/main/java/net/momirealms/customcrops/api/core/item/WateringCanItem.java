@@ -35,6 +35,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractAirEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
+import net.momirealms.customcrops.api.event.WateringCanClickSprinklerEvent;
 import net.momirealms.customcrops.api.event.WateringCanFillEvent;
 import net.momirealms.customcrops.api.event.WateringCanWaterPotEvent;
 import net.momirealms.customcrops.api.event.WateringCanWaterSprinklerEvent;
@@ -225,7 +226,16 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         int waterInCan = getCurrentWater(itemInHand);
 
         SprinklerConfig sprinklerConfig = Registries.ITEM_TO_SPRINKLER.get(targetBlockID);
-        if (sprinklerConfig != null) {
+        // Giraffe fork (2026-10-02): let plugins treat this click as a plain click — e.g. fill the can from water under the sprinkler
+        boolean sprinklerClick = sprinklerConfig != null;
+        if (sprinklerClick) {
+            SprinklerBlock clickedSprinkler = (SprinklerBlock) BuiltInBlockMechanics.SPRINKLER.mechanic();
+            CustomCropsBlockState clickedState = clickedSprinkler.fixOrGetState(world, Pos3.from(targetLocation), sprinklerConfig, targetBlockID);
+            WateringCanClickSprinklerEvent clickEvent = new WateringCanClickSprinklerEvent(player, itemInHand, event.hand(), wateringCanConfig,
+                    sprinklerConfig, targetLocation, waterInCan, clickedSprinkler.water(clickedState));
+            sprinklerClick = !EventUtils.fireAndCheckCancel(clickEvent);
+        }
+        if (sprinklerClick) {
             // ignore infinite sprinkler
             if (sprinklerConfig.infinite()) {
                 return InteractionResult.COMPLETE;
